@@ -4,6 +4,11 @@
 // dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 // dotnet tool install -g dotnet-aspnet-codegenerator
 // dotnet aspnet-codegenerator identity --useDefaultUI --force
+// dotnet ef migrations remove --context ApplicationDbContext
+// dotnet ef migrations add CreateIdentitySchema --context ApplicationDbContext -o Data/Migrations
+// dotnet ef database update --context ApplicationDbContext
+// dotnet ef database update 0 --context ApplicationDbContext
+
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +18,7 @@ using AspNet.Areas.Identity.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("AspNetIdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)); // UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
