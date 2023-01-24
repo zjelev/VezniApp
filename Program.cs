@@ -1,31 +1,24 @@
-// dotnet new webapp -au Individual
-// dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
-// dotnet add package Microsoft.EntityFrameworkCore.Design
+// dotnet new mvc -au Individual
 // dotnet add package Microsoft.EntityFrameworkCore.SqlServer
-// dotnet tool install -g dotnet-aspnet-codegenerator
-// dotnet aspnet-codegenerator identity --useDefaultUI --force
-// dotnet ef migrations remove --context ApplicationDbContext
-// dotnet ef migrations add CreateIdentitySchema --context ApplicationDbContext -o Data/Migrations
-// dotnet ef database update --context ApplicationDbContext
-// dotnet ef database update 0 --context ApplicationDbContext
-
+// dotnet ef migrations remove
+// dotnet ef migrations add InitialCreate -o Data/Migrations
+// change db owner (SSMS)
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AspNet.Data;
-using AspNet.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("AspNetIdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString)); // UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -36,7 +29,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -48,6 +41,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
