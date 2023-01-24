@@ -3,6 +3,9 @@
 // dotnet ef migrations remove
 // dotnet ef migrations add InitialCreate -o Data/Migrations
 // change db owner (SSMS)
+// dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+// dotnet aspnet-codegenerator controller -name ResultsController -outDir Controllers -namespace AspNet.Controllers
+// dotnet aspnet-codegenerator view Add Empty -outDir Views\Results  
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
