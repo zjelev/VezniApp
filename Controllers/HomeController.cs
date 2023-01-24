@@ -13,9 +13,10 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index()
+    [HttpGet("/Home/Index/{username}")]
+    public IActionResult Index(string username)
     {
-        return this.RedirectToAction("Add", "Results");
+        return this.Content(username);
     }
 
     public IActionResult Privacy()
