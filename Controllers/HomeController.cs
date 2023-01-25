@@ -13,10 +13,19 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    [HttpGet("/Home/Index/{username}")]
-    public IActionResult Index(string username)
+
+    public IActionResult Index()
     {
-        return this.Content(username);
+        this.ViewBag.Message = "Hello from ViewBag";
+        this.ViewData["Message"] = "Hello from ViewData";
+
+        var listOfPeople = new List<Person>
+        {
+            new Person("Ivan", "Ivanov", "ivan@ivan.ivan"),
+            new Person("Gosho", "Georgiev", "gosho@gosho.com")
+        };
+
+        return this.View(listOfPeople);
     }
 
     public IActionResult Privacy()

@@ -8,7 +8,7 @@ namespace AspNet.Controllers
 {
     public class ResultsController : Controller
     {
-        public IActionResult Add()
+        public IActionResult Read()
         {
             return View();
         }
