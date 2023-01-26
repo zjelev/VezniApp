@@ -16,16 +16,10 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        this.ViewBag.Message = "Hello from ViewBag";
-        this.ViewData["Message"] = "Hello from ViewData";
+        // this.ViewBag.Message = "Hello from ViewBag";
+        // this.ViewData["Message"] = "Hello from ViewData";
 
-        var listOfPeople = new List<Person>
-        {
-            new Person("Ivan", "Ivanov", "ivan@ivan.ivan"),
-            new Person("Gosho", "Georgiev", "gosho@gosho.com")
-        };
-
-        return this.View(listOfPeople);
+        return this.View();
     }
 
     public IActionResult Privacy()

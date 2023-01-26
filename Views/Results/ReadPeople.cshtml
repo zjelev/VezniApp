@@ -1,0 +1,30 @@
+@using EFUtils.Data.Models;
+
+@{
+    this.ViewData["Title"] = "Справка";
+}
+
+@model List<SpravkaNap>
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Справка</title>
+</head>
+
+<body>
+    <div class="text-center">
+        <h1 class="display-4">Справка</h1>
+        <table>
+            <th>Име</th>
+            <th>Фамилия</th>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FirstName</td>
+                    <td>@item.Family</td>
+                </tr>
+            }
+        </table>
+    </div>
+</body>

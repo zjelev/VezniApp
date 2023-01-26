@@ -1,19 +1,8 @@
 ﻿@{
-    this.ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home Page";
 }
-
-@model IEnumerable<Person>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    @for (int i = 0; i < 3; i++)
-    {
-        <h1>@this.ViewBag.Message</h1>
-    }
-
-    @foreach (var item in Model)
-    {
-        <h2>@item.FirstName @item.LastName @item.Email</h2>
-    }
+    <p>Покажи <a href="results/readpeople">справка</a>.</p>
 </div>

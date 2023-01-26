@@ -7,8 +7,11 @@
     <UserSecretsId>aspnet-AspNet-4ba209f8-7220-4d00-a4a0-3518b5180256</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!--None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" /-->
+  <ItemGroup><!--None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" /-->
+  
+    <ProjectReference Include="..\Mini\Utils\Utils.csproj" />
+  
+    <ProjectReference Include="..\Empl\EFUtils\EFUtils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

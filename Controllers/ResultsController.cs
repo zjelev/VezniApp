@@ -1,16 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using EFUtils.Data.Models.Persons;
 
 namespace AspNet.Controllers
 {
     public class ResultsController : Controller
     {
-        public IActionResult Read()
+        public IActionResult ReadPeople()
         {
-            return View();
+            var db = new PersonsContext();
+            var result = EFUtils.Program.SelectNFirst(db);
+
+            return this.View(result);
         }
     }
 }
