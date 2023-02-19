@@ -1,8 +1,24 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Начало";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Покажи <a href="results/readpeople">справка</a>.</p>
+<div class="text-center p-3">
+    <form method="post" asp-controller="Measures">
+        
+        <input type="text" list="product" name="product" placeholder="Въведи продукт"/>
+        <datalist id="product">
+            @foreach (var product in Model)
+            {
+                <option value=@product.Name></option>
+            }
+        </datalist>
+        
+        <label searchFrom="FromDate">От дата:</label>
+        <input type="date" name="from" asp-for="@DateTime.Today" />
+        <label searchTo="ToDate">До дата:</label>
+        <input type="date" name="to" asp-for="@DateTime.Today" />
+        <input type=submit value="Търси" />
+    </form>
+
+    <h4>@this.User.Identity.Name</h4>
 </div>
