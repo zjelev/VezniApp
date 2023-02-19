@@ -4,7 +4,7 @@
 // dotnet ef migrations add InitialCreate -o Data/Migrations
 // change db owner (SSMS)
 // dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
-// dotnet aspnet-codegenerator controller -name ResultsController -outDir Controllers -namespace AspNet.Controllers
+// dotnet aspnet-codegenerator controller -name MeasuressController -outDir Controllers -namespace AspNet.Controllers
 // dotnet aspnet-codegenerator view Add Empty -outDir Views\Results  
 
 using Microsoft.AspNetCore.Identity;
@@ -16,17 +16,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-var secondConnectionString = builder.Configuration.GetConnectionString("SecondConnection") ?? throw new InvalidOperationException("Connection string 'SecondConnection' not found.");
-builder.Services.AddDbContext<PersonsContext>(options =>
-    options.UseSqlServer(secondConnectionString));
+// var secondConnectionString = builder.Configuration.GetConnectionString("SecondConnection") ?? throw new InvalidOperationException("Connection string 'SecondConnection' not found.");
+// builder.Services.AddDbContext<PersonsContext>(options => options.UseSqlServer(secondConnectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
