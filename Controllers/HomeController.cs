@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using AspNet.Models;
 
+//using Microsoft.AspNetCore.Mvc.Rendering;
+
 namespace AspNet.Controllers;
 
 public class HomeController : Controller
@@ -13,13 +15,10 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-
     public IActionResult Index()
     {
-        // this.ViewBag.Message = "Hello from ViewBag";
-        // this.ViewData["Message"] = "Hello from ViewData";
-
-        return this.View();
+        var products = MeasuresServices.GetProducts();
+        return View(products);
     }
 
     public IActionResult Privacy()
