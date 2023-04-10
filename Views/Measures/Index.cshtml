@@ -4,7 +4,7 @@
 
 <div class="text-center p-3">
     <form method="post" asp-controller="Measures">
-        <input type=text list="product" name="product" placeholder="Въведи продукт" />
+        <input type=text list="product" name="product" placeholder="Въведи продукт" value="@ViewBag.Product"/>
         <datalist id="product">
             @foreach (var product in Model.Products)
             {
@@ -12,14 +12,14 @@
             }
         </datalist>
         <label searchFrom="FromDate">От дата:</label>
-        <input type="date" name="from" placeholder="dd-MM-yyyy" value="@ViewBag.From" />
+        <input type="datetime-local" name="from" placeholder="yyyy-MM-ddTHH:mm" value="@ViewBag.From" />
         <label searchTo="ToDate">До дата:</label>
-        <input type="date" name="to" placeholder="dd-MM-yyyy" value="@ViewBag.To" />
+        <input type="datetime-local" name="to" placeholder="yyyy-MM-ddTHH:mm" value="@ViewBag.To" />
         <input type=submit value="Търси" />
     </form>
 </div>
 
-<h5>@ViewBag.Product - <a id="DownloadMeasures" asp-action="DownloadSearch" asp-route-model="@Model"
+<h5>@ViewBag.Product - <a asp-action="DownloadSearch" asp-route-model="@Model"
         asp-route-product="@ViewBag.Product" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To">
         Свали в Excel</a></h5>
 

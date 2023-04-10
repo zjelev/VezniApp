@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.Streaming;
+//using NPOI.XSSF.Streaming;
 using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -12,22 +12,15 @@ namespace AspNet.Controllers
 {
     public class MeasuresController : Controller
     {
-        private DateTime now = DateTime.Now.AddSeconds(-20);
+        private DateTime now = DateTime.Now.AddSeconds(-10);
         private IEnumerable<Models.MeasureViewModel> measures;
-
-        // private readonly MeasuresServices services;
-
-        // public MeasuresController(MeasuresServices services)
-        // {
-        //     this.services = services;
-        // }
 
         [HttpPost]
         public IActionResult Index(string product, DateTime from, DateTime to)
         {
             ViewBag.Product = product;
-            ViewBag.From = from.ToString("yyyy-MM-dd");
-            ViewBag.To = to.ToString("yyyy-MM-dd");
+            ViewBag.From = from.ToString("yyyy-MM-ddTHH:mm");
+            ViewBag.To = to.ToString("yyyy-MM-ddTHH:mm");
 
             this.measures = MeasuresServices.GetMeasures(product, from, to);
             var model = new
@@ -42,9 +35,6 @@ namespace AspNet.Controllers
         public IActionResult DownloadSearch(string product, DateTime from, DateTime to)
         {
             string dateFormat = "d.M.yy";
-            ViewBag.Product = product;
-            ViewBag.From = from.ToString("yyyy-MM-dd");
-            ViewBag.To = to.ToString("yyyy-MM-dd");
             var measures = MeasuresServices.GetMeasures(product, from, to);
 
             var plannedTrucksToday = MeasuresServices.GetTrucksPlannedMonthly()?.Where(w => w.Key == now.ToString("d.M.yyyy")).FirstOrDefault().Value;
@@ -196,9 +186,7 @@ namespace AspNet.Controllers
         }
 
         public IActionResult DownloadMonthShifts()
-        {
-            var from = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            var measures = MeasuresServices.GetMeasures("ВЪГЛИЩА", from, now);
+        {            
             var dataTable = new DataTable();
             dataTable.Columns.Add("Дата", typeof(string));
             dataTable.Columns.Add("Смяна", typeof(byte));
@@ -206,7 +194,13 @@ namespace AspNet.Controllers
             dataTable.Columns.Add("Пепел [%]", typeof(string));
             dataTable.Columns.Add("Брой", typeof(int));
 
+            var from = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            if (now.Day == 1 && now.Hour < 11)
+                    from = new DateTime(DateTime.Now.Year, DateTime.Now.AddMonths(-1).Month, 1);
+
+            var measures = MeasuresServices.GetMeasures("ВЪГЛИЩА", from, now);           
             int days = DateTime.DaysInMonth(from.Year, from.Month);
+                        
             for (int day = 1; day <= days; day++)
             {
                 var dailyMeasures = measures.Where(m =>
@@ -220,18 +214,13 @@ namespace AspNet.Controllers
                 {
                     var shiftMeasures = dailyMeasures;
                     if (shift == 2)
-                    {
                         shiftMeasures = nightMeasures;
-                    }
 
                     if (shiftMeasures.Count() == 0)
-                    {
                         dataTable.Rows.Add(day, shift);
-                    }
+
                     else
-                    {
                         dataTable.Rows.Add(day, shift, shiftMeasures.Sum(s => s.Neto) / 1000.0, "N/A", shiftMeasures.Count());
-                    }
                 }
             }
 
@@ -307,6 +296,8 @@ namespace AspNet.Controllers
 
             var from = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var measures = MeasuresServices.GetMeasures("ВЪГЛИЩА", from, now);
+            if (now.Day == 1 && now.Hour < 11)
+                measures = MeasuresServices.GetMeasures("ВЪГЛИЩА", from.AddMonths(-1), DateTime.Today.AddDays(-DateTime.Today.Day));
 
             rowIndex++;
             int counter = 1;

@@ -14,11 +14,9 @@
         </datalist>
         
         <label searchFrom="FromDate">От дата:</label>
-        <input type="date" name="from" asp-for="@DateTime.Today" />
+        <input type="datetime-local" name="from" asp-for="@DateTime.Today" placeholder="yyyy-MM-ddTHH:mm"/>
         <label searchTo="ToDate">До дата:</label>
-        <input type="date" name="to" asp-for="@DateTime.Today" />
+        <input type="datetime-local" name="to" asp-for="@DateTime.Now" placeholder="yyyy-MM-ddTHH:mm"/>
         <input type=submit value="Търси" />
     </form>
-
-    <h4>@this.User.Identity.Name</h4>
 </div>

@@ -7,23 +7,22 @@
 // dotnet aspnet-codegenerator controller -name MeasuressController -outDir Controllers -namespace AspNet.Controllers
 // dotnet aspnet-codegenerator view Add Empty -outDir Views\Results  
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using AspNet.Data;
-using EFUtils.Data.Models.Persons;
+// using Microsoft.AspNetCore.Identity;
+// using Microsoft.EntityFrameworkCore;
+// using AspNet.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+// var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 // var secondConnectionString = builder.Configuration.GetConnectionString("SecondConnection") ?? throw new InvalidOperationException("Connection string 'SecondConnection' not found.");
 // builder.Services.AddDbContext<PersonsContext>(options => options.UseSqlServer(secondConnectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+// builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
 
@@ -46,11 +45,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+// app.MapRazorPages();
 
 app.Run();

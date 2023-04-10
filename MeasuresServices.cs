@@ -31,7 +31,7 @@ public class MeasuresServices
             })
             .Where(i => i.ProductName.Contains(product))
             .Where(i => i.Brutotm >= from)
-            .Where(i => i.Brutotm <= to.AddDays(1))  //users input days
+            .Where(i => i.Brutotm <= to)  //users input days
             .Where(i => i.Tara > 0)
             .Where(i => i.Bruto > 0)
             .ToList();
