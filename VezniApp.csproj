@@ -10,7 +10,6 @@
 
   <ItemGroup><!--None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" /-->
     <ProjectReference Include="..\Mini\Utils\Utils.csproj" />
-    <ProjectReference Include="..\Empl\EFUtils\EFUtils.csproj" />
     <ProjectReference Include="..\Models\Avtovezni\Balance.csproj" />
   </ItemGroup>
 
@@ -25,28 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <None Update="wwwroot\favicon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="wwwroot\css\site.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="wwwroot\header.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="wwwroot\logo.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="wwwroot\files\Measures.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="wwwroot\files\MonthShifts.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="wwwroot\files\Opis-Export.xlsx">
+	  <None Update="wwwroot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
