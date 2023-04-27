@@ -16,13 +16,15 @@ namespace AspNet.Controllers
         private IEnumerable<Models.MeasureViewModel> measures;
 
         [HttpPost]
-        public IActionResult Index(string product, DateTime from, DateTime to)
+        public IActionResult Index(string product, DateTime from, DateTime to, int? kanbel, string? plrem )
         {
             ViewBag.Product = product;
             ViewBag.From = from.ToString("yyyy-MM-ddTHH:mm");
             ViewBag.To = to.ToString("yyyy-MM-ddTHH:mm");
+            ViewBag.Kanbel = kanbel;
+            ViewBag.Plrem = plrem;
 
-            this.measures = MeasuresServices.GetMeasures(product, from, to);
+            this.measures = MeasuresServices.GetMeasures(product, from, to, kanbel, plrem);
             var model = new
             {
                 Measures = measures,
@@ -32,16 +34,21 @@ namespace AspNet.Controllers
             return this.View(model);
         }
 
-        public IActionResult DownloadSearch(string product, DateTime from, DateTime to)
+        public IActionResult DownloadSearch(string? product, DateTime from, DateTime to, int? kanbel, string? plrem)
         {
             string dateFormat = "d.M.yy";
-            var measures = MeasuresServices.GetMeasures(product, from, to);
+            var measures = MeasuresServices.GetMeasures(product, from, to, kanbel, plrem);
 
             var plannedTrucksToday = MeasuresServices.GetTrucksPlannedMonthly()?.Where(w => w.Key == now.ToString("d.M.yyyy")).FirstOrDefault().Value;
 
             string header1 = "Мини Марица-изток ЕАД - рудник Трояново-3";
             string header2 = "  Справка за проведените измервания";
-            string header3 = "за периода:" + from + " - " + now + " с условие: ВИД ТОВАР= " + product;
+            string header3 = "за периода:" + from + " - " + now;
+            if (product != null)
+                header3 +=  ", с условие: Вид товар: " + product;
+            if (plrem != null)
+                header3 += ", № ремарке съдържа \"" + plrem + "\"";
+
             string[] tableHeader = "№;Кант.бел.;От дата;Рег.№ влекач;Рег.№ рем.;Бруто;Час;Тара;Час;Нето;Водач;Фирма;Дестинация".Split(";", StringSplitOptions.RemoveEmptyEntries);
             string fileName = "Measures.xlsx";
             string wsName = measures.LastOrDefault().Brutotm.ToString(dateFormat);
@@ -131,7 +138,7 @@ namespace AspNet.Controllers
             int counter = 1;
             foreach (var measure in measures)
             {
-                var plrem = TextFile.ReplaceCyrillic(measure.Plrem);
+                var plremCyr = TextFile.ReplaceCyrillic(measure.Plrem);
                 row = sheet1.CreateRow(rowIndex);
                 row.CreateCell(0).SetCellValue(counter++);
                 row.CreateCell(1).SetCellValue((int)measure.Kanbel);
@@ -146,7 +153,7 @@ namespace AspNet.Controllers
                 row.CreateCell(10).SetCellValue(measure.Name + " " + measure.Sname + " " + measure.Fam);
                 row.CreateCell(11).SetCellValue(measure.CompanyName);
                 if (plannedTrucksToday != null)
-                    row.CreateCell(12).SetCellValue(plannedTrucksToday.Keys.Contains(plrem) ? plannedTrucksToday[plrem] : string.Empty);
+                    row.CreateCell(12).SetCellValue(plannedTrucksToday.Keys.Contains(plremCyr) ? plannedTrucksToday[plremCyr] : string.Empty);
 
                 var cells = row.Cells;
                 foreach (var cell in cells)

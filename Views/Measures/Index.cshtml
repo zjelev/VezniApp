@@ -11,16 +11,18 @@
                 <option value=@product.Name></option>
             }
         </datalist>
-        <label searchFrom="FromDate">От дата:</label>
+        <label searchFrom="FromDate">От:</label>
         <input type="datetime-local" name="from" placeholder="yyyy-MM-ddTHH:mm" value="@ViewBag.From" />
-        <label searchTo="ToDate">До дата:</label>
+        <label searchTo="ToDate">До:</label>
         <input type="datetime-local" name="to" placeholder="yyyy-MM-ddTHH:mm" value="@ViewBag.To" />
+        <input type="text" name="kanbel" placeholder="№ кант. бел."/>
+        <input type="text" name="plrem" placeholder="№ ремарке"/>
         <input type=submit value="Търси" />
     </form>
 </div>
 
 <h5>@ViewBag.Product - <a asp-action="DownloadSearch" asp-route-model="@Model"
-        asp-route-product="@ViewBag.Product" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To">
+        asp-route-product="@ViewBag.Product" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To" asp-route-kanbel="@ViewBag.Kanbel" asp-route-plrem="@ViewBag.Plrem">
         Свали в Excel</a></h5>
 
 <table>

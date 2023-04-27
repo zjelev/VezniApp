@@ -4,7 +4,7 @@ using Utils;
 
 public class MeasuresServices
 {
-    public static IEnumerable<MeasureViewModel> GetMeasures(string product, DateTime from, DateTime to)
+    public static IEnumerable<MeasureViewModel> GetMeasures(string? product, DateTime from, DateTime to, int? kanbel = null, string? plrem = null)
     {
         using var db = new balanceContext();
         var measures = db.Izmervanes
@@ -29,7 +29,9 @@ public class MeasuresServices
                 Cantnomer = i.Cantnomer,
                 ProductName = i.Product.ProductName
             })
-            .Where(i => i.ProductName.Contains(product))
+            .Where(i => kanbel == null || i.Kanbel == kanbel)
+            .Where(i => plrem == null || i.Plrem.Contains(plrem))
+            .Where(i => product == null || i.ProductName.Contains(product))
             .Where(i => i.Brutotm >= from)
             .Where(i => i.Brutotm <= to)  //users input days
             .Where(i => i.Tara > 0)
