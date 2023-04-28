@@ -6,6 +6,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Data;
 using System.Globalization;
+using System.Text.Json;
 using Utils;
 
 namespace AspNet.Controllers
@@ -14,6 +15,7 @@ namespace AspNet.Controllers
     {
         private DateTime now = DateTime.Now.AddSeconds(-8);
         private IEnumerable<Models.MeasureViewModel> measures;
+        private Speditor speditor = JsonSerializer.Deserialize<Speditor>(System.IO.File.ReadAllText("speditor.json"));
 
         [HttpPost]
         public IActionResult Index(string product, DateTime from, DateTime to, int? kanbel, string? plrem )
@@ -41,7 +43,7 @@ namespace AspNet.Controllers
 
             var plannedTrucksToday = MeasuresServices.GetTrucksPlannedMonthly()?.Where(w => w.Key == now.ToString("d.M.yyyy")).FirstOrDefault().Value;
 
-            string header1 = "Мини Марица-изток ЕАД - рудник Трояново-3";
+            string header1 = speditor.Supplier;
             string header2 = "  Справка за проведените измервания";
             string header3 = "за периода:" + from + " - " + to;
             if (product != null)
@@ -205,7 +207,7 @@ namespace AspNet.Controllers
             if (now.Day == 1 && now.Hour < 11)
                     from = new DateTime(DateTime.Now.Year, DateTime.Now.AddMonths(-1).Month, 1);
 
-            var measures = MeasuresServices.GetMeasures("ВЪГЛИЩА", from, now);           
+            var measures = MeasuresServices.GetMeasures(speditor.Product, from, now);           
             int days = DateTime.DaysInMonth(from.Year, from.Month);
                         
             for (int day = 1; day <= days; day++)
@@ -302,9 +304,9 @@ namespace AspNet.Controllers
             }
 
             var from = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            var measures = MeasuresServices.GetMeasures("ВЪГЛИЩА", from, now);
+            var measures = MeasuresServices.GetMeasures(speditor.Product, from, now);
             if (now.Day == 1 && now.Hour < 11)
-                measures = MeasuresServices.GetMeasures("ВЪГЛИЩА", from.AddMonths(-1), DateTime.Today.AddDays(-DateTime.Today.Day));
+                measures = MeasuresServices.GetMeasures(speditor.Product, from.AddMonths(-1), DateTime.Today.AddDays(-DateTime.Today.Day));
 
             rowIndex++;
             int counter = 1;
