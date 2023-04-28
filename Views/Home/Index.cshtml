@@ -16,7 +16,7 @@
         <label searchFrom="FromDate">От:</label>
         <input type="datetime-local" name="from" asp-for="@DateTime.Today" placeholder="yyyy-MM-ddTHH:mm"/>
         <label searchTo="ToDate">До:</label>
-        <input type="datetime-local" name="to" asp-for="@DateTime.Now" placeholder="yyyy-MM-ddTHH:mm"/>
+        <input type="datetime-local" name="to" asp-for="@DateTime.Now" asp-format="{0:yyyy-MM-ddTHH:mm}" placeholder="yyyy-MM-ddTHH:mm"/>
         <input type="text" name="kanbel" placeholder="№ кант. бел."/>
         <input type="text" name="plrem" placeholder="№ ремарке"/>
         <input type=submit value="Търси" />

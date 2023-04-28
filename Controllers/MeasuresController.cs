@@ -12,7 +12,7 @@ namespace AspNet.Controllers
 {
     public class MeasuresController : Controller
     {
-        private DateTime now = DateTime.Now.AddSeconds(-10);
+        private DateTime now = DateTime.Now.AddSeconds(-8);
         private IEnumerable<Models.MeasureViewModel> measures;
 
         [HttpPost]
@@ -43,7 +43,7 @@ namespace AspNet.Controllers
 
             string header1 = "Мини Марица-изток ЕАД - рудник Трояново-3";
             string header2 = "  Справка за проведените измервания";
-            string header3 = "за периода:" + from + " - " + now;
+            string header3 = "за периода:" + from + " - " + to;
             if (product != null)
                 header3 +=  ", с условие: Вид товар: " + product;
             if (plrem != null)
