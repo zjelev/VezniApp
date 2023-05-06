@@ -41,7 +41,7 @@ namespace AspNet.Controllers
             string dateFormat = "d.M.yy";
             var measures = MeasuresServices.GetMeasures(product, from, to, kanbel, plrem);
 
-            var plannedTrucksToday = MeasuresServices.GetTrucksPlannedMonthly()?.Where(w => w.Key == now.ToString("d.M.yyyy")).FirstOrDefault().Value;
+            var plannedTrucks = MeasuresServices.GetTrucksPlannedMonthly(); //?.Where(w => w.Key == to.ToString("d.M.yyyy")).FirstOrDefault().Value;
 
             string header1 = speditor.Supplier;
             string header2 = "  Справка за проведените измервания";
@@ -138,6 +138,7 @@ namespace AspNet.Controllers
 
             rowIndex++;
             int counter = 1;
+            string currentDate = measures.LastOrDefault().Brutotm.ToString("d.M.yyyy");
             foreach (var measure in measures)
             {
                 var plremCyr = TextFile.ReplaceCyrillic(measure.Plrem);
@@ -154,8 +155,14 @@ namespace AspNet.Controllers
                 row.CreateCell(9).SetCellValue((int)measure.Bruto - (int)measure.Tara);
                 row.CreateCell(10).SetCellValue(measure.Name + " " + measure.Sname + " " + measure.Fam);
                 row.CreateCell(11).SetCellValue(measure.CompanyName);
-                if (plannedTrucksToday != null)
-                    row.CreateCell(12).SetCellValue(plannedTrucksToday.Keys.Contains(plremCyr) ? plannedTrucksToday[plremCyr] : string.Empty);
+                //if (lastPlannedTrucks != null)
+                //    row.CreateCell(12).SetCellValue(lastPlannedTrucks.Keys.Contains(plremCyr) ? lastPlannedTrucks[plremCyr] : string.Empty);
+
+                if (plannedTrucks != null && plannedTrucks.ContainsKey(currentDate) & measure.Brutotm.Month == measures.LastOrDefault().Brutotm.Month)
+                {
+                    var plannedTrucksToday = plannedTrucks[currentDate];
+                    row.CreateCell(12).SetCellValue(plannedTrucks[currentDate].Keys.Contains(plremCyr) ? plannedTrucks[currentDate][plremCyr] : string.Empty);
+                }
 
                 var cells = row.Cells;
                 foreach (var cell in cells)

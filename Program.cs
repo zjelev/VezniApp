@@ -9,20 +9,17 @@
 
 // using Microsoft.AspNetCore.Identity;
 // using Microsoft.EntityFrameworkCore;
-// using AspNet.Data;
+// using Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-// builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-
-// var secondConnectionString = builder.Configuration.GetConnectionString("SecondConnection") ?? throw new InvalidOperationException("Connection string 'SecondConnection' not found.");
-// builder.Services.AddDbContext<PersonsContext>(options => options.UseSqlServer(secondConnectionString));
+// var connectionString = builder.Configuration.GetConnectionString("Delivered") ?? throw new InvalidOperationException("Connection string 'Delivered' not found.");
+// builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+// builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddControllersWithViews();
 
@@ -50,6 +47,7 @@ app.UseRouting();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 // app.MapRazorPages();
 
 app.Run();
