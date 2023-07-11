@@ -357,4 +357,4 @@ log.txt
 *.sql
 *Last.txt
 config.json
-logo.png
+**/logo.png
