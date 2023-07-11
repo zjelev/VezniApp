@@ -10,7 +10,7 @@
 
   <ItemGroup><!--None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" /-->
     <ProjectReference Include="..\Mini\Utils\Utils.csproj" />
-    <ProjectReference Include="..\Models\Avtovezni\Balance.csproj" />
+    <ProjectReference Include="..\DeliveryApp\Models\Avtovezni\Balance.csproj" />
   </ItemGroup>
 
   <ItemGroup>

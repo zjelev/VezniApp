@@ -22,8 +22,8 @@ public class MeasuresServices
                 Neto = i.Neto,
                 VodId = i.Vodmp.Id,
                 Name = i.Vodmp.Name,
-                Sname = i.Vodmp.Fam,
-                Fam = i.Vodmp.Sname,
+                Sname = i.Vodmp.Sname,
+                Fam = i.Vodmp.Fam,
                 CompanyId = i.Company.Id,
                 CompanyName = i.Company.Name,
                 Cantnomer = i.Cantnomer,
@@ -54,7 +54,7 @@ public class MeasuresServices
         return products;
     }
 
-    public static Dictionary<string, Dictionary<string, string>> GetTrucksPlannedMonthly()
+    public static Dictionary<string, Dictionary<string, (string, string)>> GetTrucksPlannedMonthly()
     {
         string planXlxFile = Directory.GetFiles(Speditor.opisPath, Speditor.planFile).FirstOrDefault();
         var warnings = new Dictionary<string, List<string>>();
@@ -62,29 +62,35 @@ public class MeasuresServices
         if (planXlxFile != null)
         {
             var worksheets = Excel.ReadWithEPPlus<List<DataTable>>(planXlxFile);
-            var trucksPlannedMonthly = new Dictionary<string, Dictionary<string, string>>();
+            var trucksPlannedMonthly = new Dictionary<string, Dictionary<string, (string, string)>>();
             foreach (var ws in worksheets)
             {
-                //ws = worksheets.Where(w => w.TableName == today).FirstOrDefault();
-                var trucksPlannedDaily = new Dictionary<string, string>();
+                var trucksPlannedDaily = new Dictionary<string, (string, string)>();
 
                 foreach (DataRow dataRow in ws.Rows)
                 {
                     try
                     {
                         var plRem = TextFile.ReplaceCyrillic(dataRow.Field<string>("РЕМАРКЕ")?.Replace(" ", string.Empty).Replace("-", string.Empty).ToUpper().Trim());
-                        var destination = dataRow.Field<string>("РАЗТ.АДРЕС");
+                        var destination = dataRow.Field<string>("РАЗТ.АДРЕС")?.Trim();
+                        var mvpReference = String.Empty;
+                        if (dataRow.Table.Columns.Contains("РЕФЕРЕНЦИЯ"))
+                            mvpReference = dataRow.Field<string>("РЕФЕРЕНЦИЯ").Trim();
 
-                        if (!trucksPlannedDaily.ContainsKey(plRem))
-                            trucksPlannedDaily.Add(plRem, destination);
-                        else
+                        if (plRem != null)
                         {
-                            string warning = $"Ремарке с № {plRem} е планирано повече от 1 път за {ws.TableName}";
-                            if (!warnings.ContainsKey(ws.TableName))
+                            if (!trucksPlannedDaily.ContainsKey(plRem))
+                                trucksPlannedDaily.Add(plRem, (destination, mvpReference));
+                            else if (!trucksPlannedDaily.ContainsKey(plRem + '-'))
+                                trucksPlannedDaily.Add(plRem + '-', (destination, mvpReference));
+                            else
                             {
-                                warnings.Add(ws.TableName, new List<string>());
+                                string warning = $"Ремарке с № {plRem} е планирано повече от 2 пъти за {ws.TableName}";
+                                if (!warnings.ContainsKey(ws.TableName))
+                                    warnings.Add(ws.TableName, new List<string>());
+
+                                warnings[ws.TableName].Add(warning);
                             }
-                            warnings[ws.TableName].Add(warning);
                         }
                     }
                     catch (NullReferenceException nre)
@@ -97,9 +103,6 @@ public class MeasuresServices
             }
             return trucksPlannedMonthly;
         }
-        else
-        {
-            return null;
-        }
+        else return null;
     }
 }

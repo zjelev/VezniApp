@@ -15,10 +15,10 @@ namespace AspNet.Controllers
     {
         private DateTime now = DateTime.Now.AddSeconds(-8);
         private IEnumerable<Models.MeasureViewModel> measures;
-        private Speditor speditor = JsonSerializer.Deserialize<Speditor>(System.IO.File.ReadAllText("speditor.json"));
+        private Speditor speditor = JsonSerializer.Deserialize<Speditor>(System.IO.File.ReadAllText("\\\\file-srv\\boss$\\PROJECTS\\avtovezni\\speditor.json"));
 
         [HttpPost]
-        public IActionResult Index(string product, DateTime from, DateTime to, int? kanbel, string? plrem )
+        public IActionResult Index(string product, DateTime from, DateTime to, int? kanbel, string? plrem)
         {
             ViewBag.Product = product;
             ViewBag.From = from.ToString("yyyy-MM-ddTHH:mm");
@@ -47,7 +47,7 @@ namespace AspNet.Controllers
             string header2 = "  Справка за проведените измервания";
             string header3 = "за периода:" + from + " - " + to;
             if (product != null)
-                header3 +=  ", с условие: Вид товар: " + product;
+                header3 += ", с условие: Вид товар: " + product;
             if (plrem != null)
                 header3 += ", № ремарке съдържа \"" + plrem + "\"";
 
@@ -56,28 +56,6 @@ namespace AspNet.Controllers
             string wsName = measures.LastOrDefault().Brutotm.ToString(dateFormat);
 
             using MemoryStream stream = new MemoryStream();
-
-            // // // If you use EPPlus in a noncommercial context according to the Polyform Noncommercial license:  
-            // // ExcelPackage.LicenseContext = LicenseContext.NonCommercial; //but we use version 4.5.3.3
-            // using ExcelPackage package = new ExcelPackage(stream);
-            // ExcelWorksheet ws = package.Workbook.Worksheets.Add(wsName);
-
-            // ws.Cells[1, 3].Value = header1;
-            // ws.Cells[2, 3].Value = header2;
-            // ws.Cells[3, 2].Value = header3;
-
-            // for (int i = 0; i < tableHeader.Length; i++)
-            // {
-            //     ws.Cells[5, i + 1].Value = tableHeader[i];
-            // }
-
-            // ws.Cells["A5"].LoadFromCollection(measures, true);
-
-            // package.Save();
-
-            // stream.Position = 0;
-            // return File(stream, "application/octet-stream", fileName);
-
 
             //using NPOI
             IWorkbook workbook = new XSSFWorkbook();
@@ -93,33 +71,6 @@ namespace AspNet.Controllers
 
             var rowIndex = 0;
             IRow row = sheet1.CreateRow(rowIndex);
-
-            // ChatGPT:
-            // var properties = typeof(Models.MeasureViewModel).GetProperties();
-            // var columnIndex = 0;
-            // foreach (var property in properties)
-            // {
-            //     var cell = row.CreateCell(columnIndex);
-            //     cell.SetCellValue(property.Name);
-            //     columnIndex++;
-            // }
-            // rowIndex++;
-            // foreach (var measure in measures)
-            // {
-            //     row = ws.CreateRow(rowIndex);
-            //     columnIndex = 0;
-            //     foreach (var property in properties)
-            //     {
-            //         var cell = row.CreateCell(columnIndex);
-            //         var value = property.GetValue(measure);
-            //         if (value != null)
-            //         {
-            //             cell.SetCellValue(value.ToString());
-            //         }
-            //         columnIndex++;
-            //     }
-            //     rowIndex++;
-            // }
 
             row.CreateCell(2).SetCellValue(header1);
             rowIndex++;
@@ -147,7 +98,7 @@ namespace AspNet.Controllers
                 row.CreateCell(1).SetCellValue((int)measure.Kanbel);
                 row.CreateCell(2).SetCellValue(measure.Brutotm.ToString(dateFormat));
                 row.CreateCell(3).SetCellValue(measure.TruckPlvl);
-                row.CreateCell(4).SetCellValue(measure.Plrem);
+                row.CreateCell(4).SetCellValue(plremCyr);
                 row.CreateCell(5).SetCellValue((int)measure.Bruto);
                 row.CreateCell(6).SetCellValue(measure.Brutotm.ToString("HH:mm"));
                 row.CreateCell(7).SetCellValue((int)measure.Tara);
@@ -155,13 +106,21 @@ namespace AspNet.Controllers
                 row.CreateCell(9).SetCellValue((int)measure.Bruto - (int)measure.Tara);
                 row.CreateCell(10).SetCellValue(measure.Name + " " + measure.Sname + " " + measure.Fam);
                 row.CreateCell(11).SetCellValue(measure.CompanyName);
-                //if (lastPlannedTrucks != null)
-                //    row.CreateCell(12).SetCellValue(lastPlannedTrucks.Keys.Contains(plremCyr) ? lastPlannedTrucks[plremCyr] : string.Empty);
 
                 if (plannedTrucks != null && plannedTrucks.ContainsKey(currentDate) & measure.Brutotm.Month == measures.LastOrDefault().Brutotm.Month)
                 {
-                    var plannedTrucksToday = plannedTrucks[currentDate];
-                    row.CreateCell(12).SetCellValue(plannedTrucks[currentDate].Keys.Contains(plremCyr) ? plannedTrucks[currentDate][plremCyr] : string.Empty);
+                    if (plannedTrucks[currentDate].Keys.Contains(plremCyr))
+                    {
+                        row.CreateCell(12).SetCellValue(plannedTrucks[currentDate][plremCyr].Item1);
+                        row.CreateCell(13).SetCellValue(plannedTrucks[currentDate][plremCyr].Item2);
+                        plannedTrucks[currentDate].Remove(plremCyr);
+                    }
+                    else if (plannedTrucks[currentDate].Keys.Contains(plremCyr + '-'))
+                    {
+                        row.CreateCell(12).SetCellValue(plannedTrucks[currentDate][plremCyr + '-'].Item1);
+                        row.CreateCell(13).SetCellValue(plannedTrucks[currentDate][plremCyr + '-'].Item2);
+                        plannedTrucks[currentDate].Remove(plremCyr + '-');
+                    }
                 }
 
                 var cells = row.Cells;
@@ -202,7 +161,7 @@ namespace AspNet.Controllers
         }
 
         public IActionResult DownloadMonthShifts()
-        {            
+        {
             var dataTable = new DataTable();
             dataTable.Columns.Add("Дата", typeof(string));
             dataTable.Columns.Add("Смяна", typeof(byte));
@@ -212,11 +171,11 @@ namespace AspNet.Controllers
 
             var from = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             if (now.Day == 1 && now.Hour < 11)
-                    from = new DateTime(DateTime.Now.Year, DateTime.Now.AddMonths(-1).Month, 1);
+                from = new DateTime(DateTime.Now.Year, DateTime.Now.AddMonths(-1).Month, 1);
 
-            var measures = MeasuresServices.GetMeasures(speditor.Product, from, now);           
+            var measures = MeasuresServices.GetMeasures(speditor.Product, from, now);
             int days = DateTime.DaysInMonth(from.Year, from.Month);
-                        
+
             for (int day = 1; day <= days; day++)
             {
                 var dailyMeasures = measures.Where(m =>
@@ -286,7 +245,7 @@ namespace AspNet.Controllers
         public IActionResult DownloadMonthOpis()
         {
             var plannedTrucks = MeasuresServices.GetTrucksPlannedMonthly();
-            string[] tableHeader = "N;Кант.бел.;От дата;Рег.№ рем.;Бруто;Бруто час;Тара;Нето kg;Кач-во р3;Ед.цена €;К-во ден;Анализ;Направление;Invoice;Баржа".Split(";", StringSplitOptions.RemoveEmptyEntries);
+            string[] tableHeader = "N;Кант.бел.;От дата;Рег.№ рем.;Бруто;Бруто час;Тара;Нето kg;Кач-во р3;Ед.цена €;К-во ден;Анализ;Направление;Invoice;Баржа;MVP".Split(";", StringSplitOptions.RemoveEmptyEntries);
             string fileName = "Opis-Export.xlsx";
 
             IWorkbook workbook = new XSSFWorkbook();
@@ -298,9 +257,6 @@ namespace AspNet.Controllers
             style.Alignment = HorizontalAlignment.Left;
             style.VerticalAlignment = VerticalAlignment.Top;
             // style.BorderBottom = BorderStyle.Thin;
-            // style.BorderTop = BorderStyle.Thin;
-            // style.BorderLeft = BorderStyle.Thin;
-            // style.BorderRight = BorderStyle.Thin;
 
             var rowIndex = 0;
             IRow row = sheet1.CreateRow(rowIndex);
@@ -336,10 +292,21 @@ namespace AspNet.Controllers
                 row.CreateCell(5).SetCellValue(measure.Brutotm.ToString("HH:mm:ss", CultureInfo.InvariantCulture));
                 row.CreateCell(6).SetCellValue((int)measure.Tara);
                 row.CreateCell(7).SetCellValue((int)measure.Bruto - (int)measure.Tara == (int)measure.Neto ? (int)measure.Neto : throw new Exception("Bruto - Tara != Neto"));
+                
                 if (plannedTrucks != null && plannedTrucks.ContainsKey(currentDate))
                 {
-                    var plannedTrucksToday = plannedTrucks[currentDate];
-                    row.CreateCell(12).SetCellValue(plannedTrucks[currentDate].Keys.Contains(plrem) ? plannedTrucks[currentDate][plrem] : string.Empty);
+                    if (plannedTrucks[currentDate].Keys.Contains(plrem))
+                    {
+                        row.CreateCell(12).SetCellValue(plannedTrucks[currentDate][plrem].Item1);
+                        row.CreateCell(13).SetCellValue(plannedTrucks[currentDate][plrem].Item2);
+                        plannedTrucks[currentDate].Remove(plrem);
+                    }
+                    else if (plannedTrucks.Keys.Contains(plrem + '-'))
+                    {
+                        row.CreateCell(12).SetCellValue(plannedTrucks[currentDate][plrem + '-'].Item1);
+                        row.CreateCell(13).SetCellValue(plannedTrucks[currentDate][plrem + '-'].Item2);
+                        plannedTrucks[currentDate].Remove(plrem + '-');
+                    }
                 }
 
                 var cells = row.Cells;
