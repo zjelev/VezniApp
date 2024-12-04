@@ -15,7 +15,7 @@ namespace AspNet.Controllers
     {
         private DateTime now = DateTime.Now.AddSeconds(-8);
         private IEnumerable<Models.MeasureViewModel> measures;
-        private Speditor speditor = JsonSerializer.Deserialize<Speditor>(System.IO.File.ReadAllText("\\\\file-srv\\boss$\\PROJECTS\\avtovezni\\speditor.json"));
+        private Speditor speditor = JsonSerializer.Deserialize<Config>(System.IO.File.ReadAllText("\\\\appl-srv\\d$\\DeliveryApp\\appsettings.json"))?.Speditor;
 
         [HttpPost]
         public IActionResult Index(string product, DateTime from, DateTime to, int? kanbel, string? plrem)

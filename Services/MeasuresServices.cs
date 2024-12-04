@@ -56,7 +56,7 @@ public class MeasuresServices
 
     public static Dictionary<string, Dictionary<string, (string, string)>> GetTrucksPlannedMonthly()
     {
-        string planXlxFile = Directory.GetFiles(Speditor.opisPath, Speditor.planFile).FirstOrDefault();
+        string planXlxFile = Directory.GetFiles(Config.opisPath, Config.speditorFile).FirstOrDefault();
         var warnings = new Dictionary<string, List<string>>();
 
         if (planXlxFile != null)
